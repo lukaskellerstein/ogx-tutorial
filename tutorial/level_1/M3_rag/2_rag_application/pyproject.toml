@@ -1,0 +1,8 @@
+[project]
+name = "ogx-tutorial-L1-M3-rag-application"
+version = "0.1.0"
+description = "L1-M3.2 — Building a RAG Application"
+requires-python = ">=3.10"
+dependencies = [
+    "ogx-client>=1.0",
+]

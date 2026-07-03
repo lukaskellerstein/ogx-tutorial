@@ -1,0 +1,9 @@
+[project]
+name = "ogx-tutorial-L1-M4-tool-runtime-api"
+version = "0.1.0"
+description = "L1-M4.1 — Tool Runtime API"
+requires-python = ">=3.10"
+dependencies = [
+    "ogx-client>=1.0",
+    "httpx>=0.27",
+]

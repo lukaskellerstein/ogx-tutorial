@@ -1,0 +1,8 @@
+[project]
+name = "ogx-tutorial-L1-M5-creating-agents"
+version = "0.1.0"
+description = "L1-M5.1 — Creating Agents"
+requires-python = ">=3.10"
+dependencies = [
+    "ogx-client>=1.0",
+]

@@ -1,0 +1,8 @@
+[project]
+name = "ogx-tutorial-L1-M1-installing-running"
+version = "0.1.0"
+description = "L1-M1.2 — Installing and Running OGX"
+requires-python = ">=3.10"
+dependencies = [
+    "ogx-client>=1.0",
+]

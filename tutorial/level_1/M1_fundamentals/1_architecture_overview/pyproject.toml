@@ -1,0 +1,8 @@
+[project]
+name = "ogx-tutorial-L1-M1-architecture-overview"
+version = "0.1.0"
+description = "L1-M1.1 — What is OGX? Architecture Overview"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+]
