@@ -11,7 +11,7 @@ In this lesson you install the OGX Python client, connect to a running OGX serve
 
 - Completed: L1-M1.1 Architecture Overview
 - Infrastructure running: OGX (port 8321), Ollama with `gemma4:e4b`
-- See `ogx-local/` in the repository root for setup instructions
+- See `infra/` in the repository root for setup instructions
 
 ## Concepts
 
@@ -32,7 +32,7 @@ There are two ways to get OGX running:
    ```
    Reproducible, isolated, and closer to how you would deploy in production.
 
-This tutorial uses the container approach via `ogx-local/compose.yml`.
+This tutorial uses the container approach via `infra/compose.yml`.
 
 ### Distributions
 
@@ -43,7 +43,7 @@ OGX ships as *distributions* — pre-configured bundles of providers:
 | `starter` | General-purpose development | Ollama (inline) |
 | `remote-vllm` | Production with external vLLM | vLLM (remote) |
 
-The `starter` distribution is what `ogx-local/` uses. It bundles Ollama for inference, SQLite for key-value storage, and can connect to Qdrant for vector search.
+The `starter` distribution is what `infra/` uses. It bundles Ollama for inference, SQLite for key-value storage, and can connect to Qdrant for vector search.
 
 ### Inference Backends
 
@@ -52,7 +52,7 @@ OGX does not run models itself — it delegates to an inference backend:
 - **Ollama** — Best for macOS / Apple Silicon development. Runs natively on the host so it can access the GPU. OGX connects via `inline::ollama`.
 - **vLLM** — Best for Linux with NVIDIA GPUs in production. Runs as a container. OGX connects via `remote::vllm`.
 
-For local development on macOS, Ollama is the recommended backend. The `ogx-local/` setup configures this automatically.
+For local development on macOS, Ollama is the recommended backend. The `infra/` setup configures this automatically.
 
 ### Configuration: run.yaml
 

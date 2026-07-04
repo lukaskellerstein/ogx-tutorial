@@ -28,7 +28,7 @@ def check_health(client: httpx.Client) -> bool:
     except httpx.ConnectError:
         print(f"  ERROR: Cannot connect to OGX server at {OGX_URL}")
         print("  Make sure the infrastructure is running:")
-        print("    cd ogx-local && podman compose up -d")
+        print("    cd infra && podman compose up -d")
         return False
 
 

@@ -32,7 +32,7 @@ def check_server() -> bool:
         print(f"ERROR: OGX server is not reachable at {OGX_URL}")
         print(f"  {exc}")
         print("Start the infrastructure first:")
-        print("  cd ogx-local && podman compose up -d")
+        print("  cd infra && podman compose up -d")
         return False
 
 

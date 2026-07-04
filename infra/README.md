@@ -65,7 +65,7 @@ ollama pull gemma4:e4b
 ### 2. Start OGX and Qdrant
 
 ```bash
-cd ogx-local
+cd infra
 podman compose up -d
 ```
 

@@ -131,7 +131,7 @@ def main() -> None:
     if not check_server_reachable(OGX_URL):
         print(f"  ERROR: OGX server is not reachable at {OGX_URL}\n")
         print("  Make sure the infrastructure is running:")
-        print("    cd ogx-local && podman compose up -d\n")
+        print("    cd infra && podman compose up -d\n")
         print("  Then wait ~30-60 seconds for OGX to start and retry.")
         sys.exit(1)
     print(f"  OGX is reachable at {OGX_URL}\n")

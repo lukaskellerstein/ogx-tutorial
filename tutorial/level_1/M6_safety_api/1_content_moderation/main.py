@@ -188,7 +188,7 @@ def main() -> None:
     print("Checking OGX server connectivity...")
     if not check_server(OGX_URL):
         print(f"  ERROR: OGX server is not reachable at {OGX_URL}")
-        print("  Run: cd ogx-local && podman compose up -d")
+        print("  Run: cd infra && podman compose up -d")
         sys.exit(1)
     print(f"  OGX is reachable at {OGX_URL}\n")
 

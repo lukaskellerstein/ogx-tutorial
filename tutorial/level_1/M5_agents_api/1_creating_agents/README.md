@@ -11,7 +11,7 @@ In this lesson you build AI agents with OGX using two complementary approaches: 
 
 - Completed: L1-M4.1 Tool Runtime API
 - Infrastructure running: OGX (port 8321), Ollama with `gemma4:e4b`
-- See `ogx-local/` in the repository root for setup instructions
+- See `infra/` in the repository root for setup instructions
 
 ## Concepts
 

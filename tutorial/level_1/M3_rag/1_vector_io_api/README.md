@@ -11,7 +11,7 @@ OGX provides a **Vector IO API** that abstracts over vector databases, giving yo
 
 - Completed: L1-M2.2 Embeddings
 - Infrastructure running: OGX (port 8321), Qdrant (port 6333), Ollama with `gemma4:e4b`
-- See `ogx-local/` in the repository root for setup instructions
+- See `infra/` in the repository root for setup instructions
 
 ## Concepts
 
@@ -72,7 +72,7 @@ vector_io:
       url: http://qdrant:6333
 ```
 
-The `ogx-local/` Podman Compose setup handles this configuration automatically.
+The `infra/` Podman Compose setup handles this configuration automatically.
 
 ## Step-by-Step
 
@@ -257,7 +257,7 @@ Note: Store IDs, similarity scores, and embedding dimensions will vary depending
 - **Two namespaces**: `client.vector_stores` manages stores (create, list, delete); `client.vector_io` handles chunk operations (insert, query).
 - **Insert requires pre-computed embeddings**: use `client.embeddings.create()` to generate vectors, then pass them in each chunk.
 - **Query auto-embeds**: you pass a plain text query and OGX embeds it using the store's configured model before performing similarity search.
-- **Qdrant** runs as a separate container in the `ogx-local/` setup, accessible at port 6333 with a web dashboard.
+- **Qdrant** runs as a separate container in the `infra/` setup, accessible at port 6333 with a web dashboard.
 
 ## Next Steps
 

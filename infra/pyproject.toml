@@ -1,5 +1,5 @@
 [project]
-name = "ogx-local"
+name = "ogx-infra"
 version = "0.1.0"
 description = "OGX local development setup and verification"
 readme = "README.md"

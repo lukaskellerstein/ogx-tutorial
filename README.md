@@ -68,7 +68,7 @@ cd ogx-tutorial
 ### 2. Start infrastructure
 
 ```bash
-cd ogx-local
+cd infra
 podman compose up -d
 ```
 
@@ -79,7 +79,7 @@ This starts the OGX server and Qdrant. OGX takes 30-60 seconds to initialize.
 ### 3. Verify the setup
 
 ```bash
-cd ogx-local
+cd infra
 uv sync
 uv run python main.py
 ```
@@ -113,7 +113,7 @@ Each lesson's `main.py` connects to the OGX server at `http://localhost:8321` an
 | Qdrant Dashboard | `http://localhost:6333/dashboard` | Vector DB UI |
 | Ollama | `http://localhost:11434` | Inference backend (host) |
 
-Infrastructure is configured via `ogx-local/.env`:
+Infrastructure is configured via `infra/.env`:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -147,7 +147,7 @@ See [`syllabus.md`](syllabus.md) for full lesson details, deliverables, and time
 
 ```
 ogx-tutorial/
-├── ogx-local/              # Infrastructure: Podman Compose + verification script
+├── infra/              # Infrastructure: Podman Compose + verification script
 │   ├── compose.yml          #   OGX + Qdrant services
 │   ├── .env                 #   Container configuration
 │   └── main.py              #   Setup verification script
