@@ -23,34 +23,39 @@ globs: ["tutorial/**/*.py"]
 Always set up the OGX client at the top of `main.py`:
 
 ```python
-from ogx_client import OGXClient
+from ogx_client import OgxClient
 
-client = OGXClient(base_url="http://localhost:8321")
+OGX_URL = "http://localhost:8321"
+MODEL = "ollama/gemma4:e4b"
+
+client = OgxClient(base_url=OGX_URL)
 ```
 
 ## Inference via OGX
 
-OGX connects to vLLM serving `google/gemma-4-E4B-it`:
+OGX connects to Ollama serving `gemma4:e4b`:
 
 ```python
-response = client.inference.chat_completion(
-    model_id="google/gemma-4-E4B-it",
+response = client.chat.completions.create(
+    model=MODEL,
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello!"},
     ],
 )
-print(response.completion_message.content.text)
+print(response.choices[0].message.content)
 ```
 
 For streaming:
 ```python
-for chunk in client.inference.chat_completion(
-    model_id="google/gemma-4-E4B-it",
+stream = client.chat.completions.create(
+    model=MODEL,
     messages=[...],
     stream=True,
-):
-    print(chunk, end="", flush=True)
+)
+for chunk in stream:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
 ```
 
 ## Agent Frameworks with OGX
@@ -62,7 +67,7 @@ from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
     base_url="http://localhost:8321/v1",
-    model="google/gemma-4-E4B-it",
+    model="ollama/gemma4:e4b",
     api_key="not-needed",
 )
 ```

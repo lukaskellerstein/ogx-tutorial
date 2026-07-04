@@ -1,0 +1,8 @@
+[project]
+name = "ogx-tutorial-L2-M2-safety-openshift"
+version = "0.1.0"
+description = "L2-M2.3 — OGX + Safety on OpenShift"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+]

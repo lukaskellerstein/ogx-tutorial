@@ -212,7 +212,7 @@ Step 7: Test the Existing Provider
   the call to a different backend.
 
 ============================================================
-Lesson complete! Next: L2-M1.3 — Production Deployment
+Lesson complete! Next: L2-M1.3 — Telemetry and Observability
 ============================================================
 ```
 
@@ -229,4 +229,4 @@ Lesson complete! Next: L2-M1.3 — Production Deployment
 
 ## Next Steps
 
-Continue to **L2-M1.3 Production Deployment**, where you will containerize OGX with Podman Compose, configure PostgreSQL for persistent memory, set up Qdrant as a production vector store, and prepare the stack for deployment on OpenShift AI.
+Continue to **L2-M1.3 Telemetry and Observability**, where you will enable OpenTelemetry tracing in OGX, export traces to Jaeger, and visualize end-to-end request flows through inference and tool calls.

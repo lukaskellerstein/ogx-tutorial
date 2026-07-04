@@ -32,7 +32,7 @@ def check_server() -> bool:
         print(f"ERROR: OGX server is not reachable at {OGX_URL}")
         print(f"  {exc}")
         print("Start the infrastructure first:")
-        print("  cd infra && podman compose up -d")
+        print("  cd ogx-local && podman compose up -d")
         return False
 
 
@@ -170,7 +170,7 @@ def main() -> None:
     test_existing_provider(client)
 
     print("=" * 60)
-    print("Lesson complete! Next: L2-M1.3 — Production Deployment")
+    print("Lesson complete! Next: L2-M1.3 — Telemetry and Observability")
     print("=" * 60)
 
 

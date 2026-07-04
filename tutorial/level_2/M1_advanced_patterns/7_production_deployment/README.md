@@ -1,4 +1,4 @@
-# L2-M1.3 — Production Deployment
+# L2-M1.7 — Production Deployment
 
 **Level:** Practitioner
 **Duration:** 45 min
@@ -9,7 +9,7 @@ Deploy OGX for production with a containerized, scalable architecture. This less
 
 ## Prerequisites
 
-- Completed: L2-M1.2 Custom Providers
+- Completed: L2-M1.6 File Processors
 - Infrastructure running: OGX server (port 8321), Qdrant (port 6333), Ollama with `gemma4:e4b`
 
 ## Concepts
@@ -148,7 +148,7 @@ The lesson finishes by running health checks against the local infrastructure an
 ## Running the Lesson
 
 ```bash
-cd tutorial/level_2/M1_advanced_patterns/3_production_deployment
+cd tutorial/level_2/M1_advanced_patterns/7_production_deployment
 uv sync
 uv run python main.py
 ```
@@ -156,7 +156,7 @@ uv run python main.py
 ## Expected Output
 
 ```
-L2-M1.3 — Production Deployment
+L2-M1.7 — Production Deployment
 ============================================================
 
 ============================================================
@@ -226,9 +226,4 @@ Lesson complete!
 
 ## Next Steps
 
-Congratulations — you have completed the OGX tutorial! Here is what to explore next:
-
-- **OpenShift AI modules**: deploy OGX on OpenShift AI with the OGX Operator (L2-M1 RAG, L2-M3 Agent Deployment in the OpenShift AI tutorial).
-- **Advanced agents**: build multi-agent systems with LangGraph and OGX as the inference backend.
-- **Custom providers**: extend OGX with your own inference or safety providers (revisit L2-M1.2).
-- **OGX documentation**: https://ogx-ai.github.io/docs for the full API reference and provider catalog.
+Continue to **L2-M2.1 — OGX Operator Deployment**, where you will deploy OGX on OpenShift AI using the OGX Kubernetes Operator and custom resource definitions.

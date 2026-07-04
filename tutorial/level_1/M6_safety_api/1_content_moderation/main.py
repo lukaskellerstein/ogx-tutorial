@@ -188,7 +188,7 @@ def main() -> None:
     print("Checking OGX server connectivity...")
     if not check_server(OGX_URL):
         print(f"  ERROR: OGX server is not reachable at {OGX_URL}")
-        print("  Run: cd infra && podman compose up -d")
+        print("  Run: cd ogx-local && podman compose up -d")
         sys.exit(1)
     print(f"  OGX is reachable at {OGX_URL}\n")
 
@@ -239,7 +239,7 @@ def main() -> None:
   4. Shields attach to agents for automatic moderation
   5. Safety is essential for production AI applications
 
-  Next: Level 2 (L2-M1.1 -- Multi-Provider Configuration)
+  Next: L1-M7.1 -- Files, Batches, Conversations, and Prompts
 """)
 
 

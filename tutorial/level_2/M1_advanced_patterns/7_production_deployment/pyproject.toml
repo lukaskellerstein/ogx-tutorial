@@ -1,7 +1,7 @@
 [project]
 name = "ogx-tutorial-L2-M1-production-deployment"
 version = "0.1.0"
-description = "L2-M1.3 — Production Deployment"
+description = "L2-M1.7 — Production Deployment"
 requires-python = ">=3.10"
 dependencies = [
     "ogx-client>=1.0",

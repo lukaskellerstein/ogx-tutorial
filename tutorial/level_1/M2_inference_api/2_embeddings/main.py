@@ -124,7 +124,7 @@ def main() -> None:
     print("    2. Query the vector store with a question embedding")
     print("    3. Pass retrieved context to the LLM for grounded answers")
     print()
-    print("Done!")
+    print("Done! Next: L1-M3.1 — Vector Stores API")
     print()
 
 

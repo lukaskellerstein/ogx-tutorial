@@ -1,4 +1,4 @@
-"""L2-M1.3 — Production Deployment.
+"""L2-M1.7 — Production Deployment.
 
 Demonstrates production deployment patterns for OGX:
 health checks, containerized architecture, PostgreSQL KVStore,
@@ -187,7 +187,7 @@ def readiness_checklist() -> None:
 def main() -> None:
     """Run all production deployment demonstrations."""
     print()
-    print("L2-M1.3 — Production Deployment")
+    print("L2-M1.7 — Production Deployment")
     print("=" * 60)
     print()
 
@@ -203,7 +203,7 @@ def main() -> None:
     readiness_checklist()
 
     print("=" * 60)
-    print("Lesson complete!")
+    print("Lesson complete! Next: L2-M2.1 — OGX Operator Deployment")
     print("=" * 60)
 
 

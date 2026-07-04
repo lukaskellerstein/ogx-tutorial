@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Learn OGX (formerly Llama Stack) — the open-source unified AI runtime providing standardized APIs for inference, RAG, agents, tool calling, and MCP. This sub-tutorial covers OGX independently before you use the OGX Operator on OpenShift AI.
+Learn OGX (formerly Llama Stack) — the open-source unified AI runtime providing standardized, OpenAI-compatible APIs for inference, RAG, agents, tool calling, and MCP. This sub-tutorial covers OGX independently before you use the OGX Operator on OpenShift AI.
 
 ## Why a Separate Tutorial?
 
@@ -26,6 +26,7 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 - **Model**: `google/gemma-4-E4B-it` (4B effective params, ~3 GB at Q4) via vLLM
 - **Vector DB**: Qdrant — via OGX `inline::qdrant` (embedded, dev) or `remote::qdrant` (server, production)
 - **Memory / KVStore**: SQLite (dev, default) / PostgreSQL (production)
+- **Agent API**: Responses API (`/v1/responses`) — the primary agent orchestration interface
 - **Agent Frameworks**: LangChain v1.0+, LangGraph (latest), DeepAgents
 - **MCP**: OGX Tool Runtime with MCP integration
 - **Container Runtime**: Podman (not Docker)
@@ -48,8 +49,8 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 # LEVEL 1 — ESSENTIALS
 
-*Goal: Understand OGX APIs, run inference, build RAG, create agents.*
-*Estimated time: ~8-10 hours*
+*Goal: Understand OGX APIs, run inference, build RAG, create agents with the Responses API.*
+*Estimated time: ~9-11 hours*
 
 ---
 
@@ -58,21 +59,33 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 ### L1-1.1 — What is OGX? Architecture Overview
 **Duration:** 30 min
 **Topics:**
-- OGX: unified AI runtime with standardized APIs
-- API surface:
-  - `/v1/inference` — text generation, chat, embeddings
-  - `/v1/memory` — conversation history and context management
-  - `/v1/tool_runtime` — tool calling and MCP integration
-  - `/v1/vector_io` — vector database operations (insert, query)
-  - `/v1/safety` — content moderation and guardrails
-  - `/v1alpha/agents` — agent creation and execution
+- OGX: unified AI runtime with standardized, OpenAI-compatible APIs
+- API surface — **Stable APIs:**
+  - `/v1/chat/completions` — chat-style inference (OpenAI-compatible)
+  - `/v1/completions` — text completions
+  - `/v1/embeddings` — embedding generation
+  - `/v1/responses` — agent orchestration with tool use and multi-turn (**primary agent API**)
+  - `/v1/models` — model listing and management
+  - `/v1/files` — file upload and management
+  - `/v1/vector_stores` — document storage and semantic search
+  - `/v1/batches` — offline batch processing
+  - `/v1/admin/tools` — tool listing and management
+  - `/v1/conversations` — conversation state management
+  - `/v1/prompts` — prompt templates and versioning
+- API surface — **Experimental APIs:**
+  - `/v1alpha/admin` — providers, routes, health, version
+  - `/v1alpha/inference/rerank` — document reranking
+  - `/v1alpha/file_processors` — document ingestion and chunking
+  - `/v1alpha/interactions` — Google Interactions API compatibility
+  - `/v1alpha/admin/connectors` — external tool/service connectors
+- Note: older docs may reference legacy paths (`/v1/inference`, `/v1/memory`, `/v1/vector_io`, `/v1/safety`, `/v1alpha/agents`) — the new API is OpenAI-compatible
 - Provider-agnostic: 23 inference providers (vLLM, Ollama, OpenAI, Anthropic, Bedrock, etc.)
 - Distribution concept: pre-configured bundles of providers for specific use cases
 - Comparison with direct vLLM: OGX adds RAG, agents, memory, safety on top
 
 **Deliverables:**
 - Architecture diagram: OGX API layers and providers
-- API surface overview table
+- Full API surface overview table (stable + experimental)
 
 ---
 
@@ -93,12 +106,13 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 - Ollama as fallback (Apple Silicon dev): `inline::ollama`
 - Configuration: `run.yaml` with provider settings
 - Python client: `OGXClient`
-- First API call: chat completion through OGX
+- First API call: chat completion through OGX using `/v1/chat/completions`
+- Verify: list models via `/v1/models`
 
 **Deliverables:**
 - OGX server running as Podman container with vLLM backend
 - vLLM serving `gemma-4-E4B-it` model
-- Python client calling the inference API
+- Python client calling the inference API via OpenAI-compatible endpoint
 
 ---
 
@@ -107,12 +121,12 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 ### L1-2.1 — Chat and Completion
 **Duration:** 30 min
 **Topics:**
-- Chat completions: `/v1/inference/chat_completion`
-- Text completions: `/v1/inference/completion`
+- Chat completions: `/v1/chat/completions` (was `/v1/inference/chat_completion`)
+- Text completions: `/v1/completions` (was `/v1/inference/completion`)
 - Streaming responses
 - System prompts and conversation history
 - Parameters: temperature, max_tokens, top_p
-- Model selection and registration
+- Model selection and registration via `/v1/models`
 - Comparing with direct vLLM API: OGX adds RAG, agents, memory, safety, tools on top
 - Model: `google/gemma-4-E4B-it` (4B effective params) via vLLM
 
@@ -125,7 +139,7 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 ### L1-2.2 — Embeddings
 **Duration:** 20 min
 **Topics:**
-- Embedding generation: `/v1/inference/embeddings`
+- Embedding generation: `/v1/embeddings` (was `/v1/inference/embeddings`)
 - Supported embedding models
 - Batch embedding generation
 - Use case: generating embeddings for RAG document ingestion
@@ -138,13 +152,15 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 ## L1-M3: RAG with OGX
 
-### L1-3.1 — Vector IO API
+### L1-3.1 — Vector Stores API
 **Duration:** 45 min
 **Topics:**
-- Vector IO: OGX's abstraction over vector databases
+- Vector Stores: OGX's abstraction over vector databases
+- API path: `/v1/vector_stores` (was `/v1/vector_io`)
 - Operations:
-  - `vector_io.insert` — add documents with embeddings
-  - `vector_io.query` — similarity search
+  - Create/list/delete vector stores
+  - Insert documents with embeddings
+  - Similarity search and retrieval
 - Qdrant as vector backend:
   - `inline::qdrant` — embedded mode (zero-config, great for dev)
   - `remote::qdrant` — server mode (production, Docker container)
@@ -163,10 +179,10 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 **Duration:** 1 hour
 **Topics:**
 - End-to-end RAG with OGX APIs:
-  1. Ingest: chunk documents → embed → store via Vector IO
-  2. Retrieve: query Vector IO for relevant context
-  3. Generate: pass context + question to inference API
-- Memory API for conversation history in multi-turn RAG
+  1. Ingest: chunk documents, embed, store via `/v1/vector_stores`
+  2. Retrieve: query vector store for relevant context
+  3. Generate: pass context + question to `/v1/chat/completions`
+- Conversations API (`/v1/conversations`) for multi-turn RAG
 - Comparing with LangChain RAG:
   - OGX: single API surface, fewer dependencies, tighter integration
   - LangChain: more flexibility, larger ecosystem of retrievers/splitters
@@ -184,12 +200,14 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 **Duration:** 45 min
 **Topics:**
 - Tool Runtime: OGX's tool calling infrastructure
+- Tool management via `/v1/admin/tools`
 - Defining tools: function signatures, parameter schemas
 - Built-in tools: web search, code interpreter
 - Custom tool registration
-- Tool execution flow: LLM decides → OGX executes → result returned
+- Tool execution flow: LLM decides, OGX executes, result returned
 - MCP integration: connecting MCP servers as tool providers
 - Comparing with direct MCP: OGX provides a unified tool + inference layer
+- Preview: the Responses API (`/v1/responses`) combines tool calling with multi-turn agent orchestration — covered in L1-M5
 
 **Deliverables:**
 - Custom tools registered and called through OGX
@@ -197,45 +215,42 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 ---
 
-## L1-M5: Agents API
+## L1-M5: Responses API and Agents
 
-### L1-5.1 — Creating Agents
+### L1-5.1 — Responses API
 **Duration:** 1 hour
 **Topics:**
-- Agents API: `/v1alpha/agents`
-- Agent creation: `agents.create()`
-  - Model selection
-  - System prompt (instructions)
-  - Available tools
-  - Safety configuration
-- Agent sessions: `agents.session.create()`
-- Agent turns: `agents.turn.create()`
-  - Single-turn and multi-turn conversations
-  - Tool calling within turns
-  - Streaming agent responses
-- Agent lifecycle management
+- The Responses API (`/v1/responses`) — OGX's **primary agent orchestration interface**
+- Why Responses API: combines inference, tool use, and multi-turn conversation in a single endpoint
+- Creating responses with tool definitions
+- Multi-turn conversations via `previous_response_id`
+- Built-in tool types: web search, file search, code interpreter, MCP tools
+- Streaming responses with tool call events
+- Comparison: Responses API vs old Agents API (`/v1alpha/agents`)
+  - Responses API: OpenAI-compatible, single-endpoint, stateless or stateful, production-ready
+  - Old Agents API: required separate create/session/turn calls, now deprecated/legacy
 - Comparing with LangGraph agents:
-  - OGX agents: simpler API, less flexible, native tool/safety integration
+  - OGX Responses: simpler API, native tool/safety integration
   - LangGraph agents: complex state machines, conditional routing, more control
 
 **Deliverables:**
-- OGX agent with tools, multi-turn conversation
-- Comparison: same task with OGX agent vs LangGraph agent
+- OGX Responses-based agent with tools, multi-turn conversation
+- Comparison: same task with Responses API vs LangGraph agent
 
 ---
 
 ### L1-5.2 — Agents with RAG
 **Duration:** 45 min
 **Topics:**
-- Combining agents with RAG:
-  - Agent uses Vector IO for retrieval
+- Combining Responses API with RAG:
+  - Agent uses file search tool backed by vector stores
   - Automatic context injection into agent conversations
-- Memory API integration: agent remembers conversation across sessions
+- Conversations API (`/v1/conversations`) for persistent agent state
 - Use case: knowledge assistant that answers questions from a document corpus
 - RAG + Tools: agent retrieves context AND calls tools as needed
 
 **Deliverables:**
-- RAG-powered agent answering questions from ingested documents
+- RAG-powered agent using Responses API, answering questions from ingested documents
 - Agent using both retrieval and tool calling
 
 ---
@@ -245,16 +260,45 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 ### L1-6.1 — Content Moderation
 **Duration:** 30 min
 **Topics:**
-- Safety API: `/v1/safety`
+- Safety configuration in OGX
 - Input shields: checking user messages before processing
 - Output shields: checking model responses before returning
 - Built-in detectors: content classification, toxicity, PII
-- Configuring safety for agents: shields applied automatically
+- Configuring safety for Responses API agents: shields applied automatically
 - Integration with NeMo Guardrails and Llama Guard
 
 **Deliverables:**
 - Safety shields configured for an OGX agent
 - Demonstration: blocked harmful content
+
+---
+
+## L1-M7: Additional APIs
+
+### L1-7.1 — Files, Batches, Conversations, and Prompts
+**Duration:** 30 min
+**Topics:**
+- Files API (`/v1/files`): uploading and managing files for use with agents and RAG
+  - Upload, list, retrieve, delete files
+  - File types and size limits
+- Batches API (`/v1/batches`): offline batch processing
+  - Submitting batch inference jobs
+  - Monitoring batch status and retrieving results
+  - Use case: bulk document classification, large-scale embedding generation
+- Conversations API (`/v1/conversations`): managing conversation state
+  - Creating, listing, and retrieving conversations
+  - Linking conversations to Responses API calls
+  - Persistent conversation history across sessions
+- Prompts API (`/v1/prompts`): prompt templates and versioning
+  - Creating reusable prompt templates
+  - Parameterized prompts
+  - Version management for prompt iteration
+
+**Deliverables:**
+- File uploaded and used in a Responses API call
+- Batch job submitted and results retrieved
+- Conversation state persisted and retrieved
+- Prompt template created and used
 
 ---
 
@@ -266,16 +310,17 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 | M2: Inference API | 2 lessons | ~50 min |
 | M3: RAG | 2 lessons | ~1.75 hours |
 | M4: Tool Calling & MCP | 1 lesson | ~45 min |
-| M5: Agents API | 2 lessons | ~1.75 hours |
+| M5: Responses API & Agents | 2 lessons | ~1.75 hours |
 | M6: Safety API | 1 lesson | ~30 min |
-| **Total** | **10 lessons** | **~7-8 hours** |
+| M7: Additional APIs | 1 lesson | ~30 min |
+| **Total** | **11 lessons** | **~9-10 hours** |
 
 ---
 
 # LEVEL 2 — PRACTITIONER
 
-*Goal: Advanced patterns, multi-provider, production configuration.*
-*Estimated time: ~4-5 hours*
+*Goal: Advanced patterns, multi-provider, telemetry, evals, production configuration, OGX on OpenShift AI.*
+*Estimated time: ~7-9 hours*
 
 ---
 
@@ -286,7 +331,7 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 **Topics:**
 - Configuring multiple inference providers in one OGX instance
 - Routing: different models for different tasks (chat vs embedding vs safety)
-- Fallback chains: primary → secondary provider
+- Fallback chains: primary to secondary provider
 - Provider configuration in `run.yaml`
 - Custom distributions: bundling providers for specific use cases
 
@@ -310,7 +355,77 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 ---
 
-### L2-1.3 — Production Deployment
+### L2-1.3 — Telemetry and Observability
+**Duration:** 45 min
+**Topics:**
+- OGX OpenTelemetry (OTel) integration for tracing
+- Enabling telemetry in `run.yaml`
+- Tracing inference calls, tool executions, and Responses API turns
+- Exporting traces to Jaeger or compatible backends
+- Structured logging: request IDs, latency, token counts
+- Correlating OGX traces with downstream provider traces (e.g., vLLM)
+- Dashboard setup: visualizing OGX request flows
+
+**Deliverables:**
+- OGX instance with OTel tracing enabled
+- Traces exported to Jaeger, visualized in the Jaeger UI
+- End-to-end trace of a Responses API call with tool use
+
+---
+
+### L2-1.4 — Evaluation and RAG Benchmarks
+**Duration:** 45 min
+**Topics:**
+- OGX evaluation capabilities
+- Defining eval tasks: question-answer pairs, expected outputs
+- Running evals against different models and providers
+- RAG benchmarking through OGX:
+  - Measuring retrieval quality (precision, recall, MRR)
+  - End-to-end RAG evaluation (retrieval + generation)
+  - Comparing retrieval configurations (chunk size, overlap, embedding model)
+- Automated regression testing for RAG pipelines
+
+**Deliverables:**
+- Eval suite defined and run against an OGX-served model
+- RAG benchmark comparing two retrieval configurations
+- Results report with metrics
+
+---
+
+### L2-1.5 — Reranking and Advanced Retrieval
+**Duration:** 30 min
+**Topics:**
+- Experimental Rerank API: `/v1alpha/inference/rerank`
+- Two-stage retrieval: vector search then rerank for higher relevance
+- Configuring reranking models in OGX
+- Combining reranking with Vector Stores API for better RAG results
+- Comparing retrieval quality: with and without reranking
+- When to use reranking: large document corpora, precision-critical applications
+
+**Deliverables:**
+- Reranking pipeline: vector search + rerank
+- Side-by-side comparison: RAG quality with and without reranking
+
+---
+
+### L2-1.6 — File Processors
+**Duration:** 30 min
+**Topics:**
+- Experimental File Processors API: `/v1alpha/file_processors`
+- Document ingestion pipeline via OGX
+- Supported file types: PDF, DOCX, HTML, Markdown, plain text
+- Chunking strategies: fixed-size, sentence-based, semantic
+- Processing flow: upload file, process, chunk, embed, store in vector store
+- Comparing with manual ingestion (L1-M3): File Processors automate the pipeline
+- Limitations and maturity of the experimental API
+
+**Deliverables:**
+- Document ingested via File Processors API
+- Chunks stored in vector store and queryable
+
+---
+
+### L2-1.7 — Production Deployment
 **Duration:** 45 min
 **Topics:**
 - Containerizing OGX for production with Podman
@@ -326,12 +441,68 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 ---
 
+## L2-M2: OGX on OpenShift AI
+
+### L2-2.1 — OGX Operator Deployment
+**Duration:** 45 min
+**Topics:**
+- Installing the OGX/Llama Stack Operator via DataScienceCluster component (`llamastackoperator`)
+- OGX CRDs: LlamaStackServer, LlamaStackDistribution
+- Configuring the OGX distribution on OpenShift
+- Connecting OGX to vLLM models served via KServe
+- Operator lifecycle: upgrades, health monitoring
+- Prerequisites: OpenShift AI installed, vLLM model serving configured
+
+**Deliverables:**
+- OGX Operator installed via DSC component
+- OGX server deployed on OpenShift via CRD
+- OGX connected to KServe-served vLLM model
+
+---
+
+### L2-2.2 — OGX + vLLM Integration on OpenShift
+**Duration:** 45 min
+**Topics:**
+- Serving through OGX on OpenShift: Routes, Services, and API access
+- Connecting to KServe-deployed models: configuring `remote::vllm` provider with in-cluster URLs
+- Using the Responses API on the cluster: agent orchestration at scale
+- Streamable HTTP transport for long-running agent interactions
+- Configuring vector stores on OpenShift: persistent storage for Qdrant
+- Autoscaling OGX pods based on request load
+- Testing: calling OGX APIs from outside the cluster via OpenShift Routes
+
+**Deliverables:**
+- OGX serving Responses API on OpenShift with vLLM backend
+- Agent orchestration running on-cluster with tool use
+- External access via OpenShift Route
+
+---
+
+### L2-2.3 — OGX + Safety on OpenShift
+**Duration:** 45 min
+**Topics:**
+- Integrating OGX safety shields on OpenShift
+- NeMo Guardrails integration: deploying alongside OGX
+- TrustyAI detectors: connecting OGX to TrustyAI for bias/fairness checks
+- Guardrails Orchestrator: routing requests through safety checks before OGX inference
+- Llama Guard via OGX safety API: content moderation at scale
+- Configuration: safety providers in `run.yaml` on OpenShift
+- End-to-end flow: request hits safety shield, passes to OGX inference, response checked before return
+
+**Deliverables:**
+- OGX with safety shields running on OpenShift
+- End-to-end demo: harmful input blocked, safe input processed
+- Safety pipeline integrated with Guardrails Orchestrator
+
+---
+
 ### Level 2 Summary
 
 | Module | Lessons | Estimated Time |
 |--------|---------|---------------|
-| M1: Advanced Patterns | 3 lessons | ~2.5 hours |
-| **Total** | **3 lessons** | **~2.5-3 hours** |
+| M1: Advanced Patterns | 7 lessons | ~4.5 hours |
+| M2: OGX on OpenShift AI | 3 lessons | ~2.25 hours |
+| **Total** | **10 lessons** | **~7-8 hours** |
 
 ---
 
@@ -339,6 +510,6 @@ The project was originally called "Llama Stack" (by Meta). In April 2026, it was
 
 | Level | Focus | Lessons | Time |
 |-------|-------|---------|------|
-| **Level 1 — Essentials** | APIs, RAG, agents, tools, safety | 10 lessons | ~7-8 hours |
-| **Level 2 — Practitioner** | Multi-provider, custom extensions, production | 3 lessons | ~2.5-3 hours |
-| **Total** | | **13 lessons** | **~9-11 hours** |
+| **Level 1 — Essentials** | APIs, RAG, Responses API agents, tools, safety | 11 lessons | ~9-10 hours |
+| **Level 2 — Practitioner** | Multi-provider, telemetry, evals, production, OGX on OpenShift AI | 10 lessons | ~7-8 hours |
+| **Total** | | **21 lessons** | **~16-18 hours** |

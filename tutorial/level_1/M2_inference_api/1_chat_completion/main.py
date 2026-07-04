@@ -213,7 +213,7 @@ def main() -> None:
     vllm_comparison_note()
 
     print("=" * 60)
-    print("Lesson complete!")
+    print("Lesson complete! Next: L1-M2.2 — Embeddings")
     print("=" * 60)
 
 

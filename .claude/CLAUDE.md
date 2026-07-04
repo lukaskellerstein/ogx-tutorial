@@ -17,8 +17,8 @@ The full syllabus lives in `syllabus.md` — always consult it for module struct
 - **OGX**: Latest (v1.1.3+), runs as a Podman container
 - **Python**: 3.10+
 - **Package manager**: `uv` (every lesson is a standalone `uv` project)
-- **Inference backend**: vLLM (primary, Podman container) — Ollama as optional fallback
-- **Model**: `google/gemma-4-E4B-it` (4B effective params) via vLLM
+- **Inference backend**: Ollama (primary, native on macOS for Apple Silicon GPU) — vLLM as production alternative
+- **Model**: `ollama/gemma4:e4b` (Ollama format) / `google/gemma-4-E4B-it` (vLLM format)
 - **Vector DB**: Qdrant — via OGX `inline::qdrant` (dev) or `remote::qdrant` (production)
 - **Memory / KVStore**: SQLite (dev, default) / PostgreSQL (production)
 - **Agent frameworks**: LangChain v1.0+, LangGraph (latest), DeepAgents
@@ -28,11 +28,12 @@ The full syllabus lives in `syllabus.md` — always consult it for module struct
 ## Project Layout
 
 ```
-infra/                          # All infrastructure (Podman Compose)
-  compose.yml                   #   OGX + vLLM + Qdrant + PostgreSQL
+ogx-local/                      # All infrastructure (Podman Compose)
+  compose.yml                   #   OGX + Qdrant (Ollama runs natively)
+  .env                          #   Environment config
 syllabus.md                     # Master syllabus — the source of truth
 tutorial/
-  level_1/                      # Level 1: Essentials
+  level_1/                      # Level 1: Essentials (11 lessons)
     M1_fundamentals/
       1_architecture_overview/
       2_installing_running/
@@ -49,11 +50,21 @@ tutorial/
       2_agents_with_rag/
     M6_safety_api/
       1_content_moderation/
-  level_2/                      # Level 2: Practitioner
+    M7_additional_apis/
+      1_files_batches_conversations_prompts/
+  level_2/                      # Level 2: Practitioner (10 lessons)
     M1_advanced_patterns/
       1_multi_provider_config/
       2_custom_providers/
-      3_production_deployment/
+      3_telemetry_observability/
+      4_evaluation_rag_benchmarks/
+      5_reranking_advanced_retrieval/
+      6_file_processors/
+      7_production_deployment/
+    M2_ogx_openshift_ai/
+      1_operator_deployment/
+      2_vllm_integration/
+      3_safety_openshift/
 ```
 
 Each lesson is a self-contained directory:
@@ -68,16 +79,16 @@ N_lesson_name/
 ## Starting Infrastructure
 
 ```bash
-cd infra
+cd ogx-local
 podman compose up -d
 ```
 
-This starts OGX, vLLM (with gemma-4-E4B-it), Qdrant, and PostgreSQL.
+This starts OGX and Qdrant containers. Ollama runs natively on macOS (Apple Silicon GPU).
 
 | Service | URL |
 |---------|-----|
 | OGX API | http://localhost:8321 |
-| vLLM API | http://localhost:8000 |
+| Ollama | http://localhost:11434 |
 | Qdrant | http://localhost:6333/dashboard |
 
 ## Running a Lesson
@@ -90,7 +101,7 @@ uv run python main.py
 
 ## Key Commands
 
-- `podman compose up -d` — start all infrastructure (from `infra/`)
+- `podman compose up -d` — start all infrastructure (from `ogx-local/`)
 - `podman compose down` — stop all services (preserves data)
 - `podman compose down -v` — stop and wipe all data
 - `uv init` — scaffold a new lesson project
