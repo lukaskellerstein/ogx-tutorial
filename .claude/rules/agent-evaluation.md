@@ -8,17 +8,19 @@ Agents are a core part of this tutorial. The goal is to show how to build, run, 
 
 ## Where Agents Appear in the Curriculum
 
-- **Level 1, M4**: Tool Calling & MCP — OGX tool runtime, custom tools, MCP integration
-- **Level 1, M5**: Agents API — OGX native agents, agents with RAG
-- **Level 2, M1**: Advanced Patterns — multi-provider, custom providers, production deployment
+- **Level 1, M4**: Tool Calling & MCP — function tools via Responses API, MCP integration
+- **Level 1, M5**: Responses API & Agents — OGX Responses API agents, agents with RAG
+- **Level 2, M1**: Advanced Patterns — multi-provider, telemetry, evaluation, production deployment
+- **Level 2, M2**: OGX on OpenShift AI — operator deployment, vLLM integration, safety
 
 ## Agent Frameworks
 
-### 1. OGX Native Agents (Level 1, M5)
-- Use OGX Agents API (`/v1alpha/agents`)
-- Built-in tool calling, safety shields, memory
-- Simpler API than LangGraph, less flexible but tighter OGX integration
-- Multi-turn conversations with session management
+### 1. OGX Responses API Agents (Level 1, M5)
+- Use OGX Responses API (`/v1/responses`) — the primary agent orchestration interface
+- Multi-turn via `previous_response_id`
+- Built-in tool types: `web_search`, `file_search`, `code_interpreter`, `mcp`
+- Agent helper: `from ogx_client.lib.agents.agent import Agent` with `@client_tool`
+- Note: old Agents API (`/v1alpha/agents`) is deprecated/legacy
 
 ### 2. LangChain Agents
 - Use `create_react_agent` from LangChain v1.0+ (NOT deprecated APIs)
@@ -47,20 +49,20 @@ from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
     base_url="http://localhost:8321/v1",
-    model="google/gemma-4-E4B-it",
+    model="ollama/gemma4:e4b",
     api_key="not-needed",
 )
 ```
 
-For OGX native agents, use the OGX client directly:
+For OGX Responses API agents, use the OGX client directly:
 
 ```python
-from ogx_client import OGXClient
+from ogx_client import OgxClient
 
-client = OGXClient(base_url="http://localhost:8321")
-agent = client.agents.create(
-    model="google/gemma-4-E4B-it",
-    instructions="...",
+client = OgxClient(base_url="http://localhost:8321")
+response = client.responses.create(
+    model="ollama/gemma4:e4b",
+    input="Hello!",
     tools=[...],
 )
 ```

@@ -1,11 +1,11 @@
-# L1-M5.1 — Creating Agents
+# L1-M5.1 — Responses API
 
 **Level:** Essentials
 **Duration:** 1 hour
 
 ## Overview
 
-In this lesson you build AI agents with OGX using two complementary approaches: the **Responses API** for direct agentic interactions with tool calling, and the **Agent helper class** for session-based workflows with automatic tool execution. By the end you will understand how to create agents, chain multi-turn conversations, define and invoke custom tools, and choose between OGX agents and LangGraph agents.
+The **Responses API** (`/v1/responses`) is OGX's primary agent orchestration interface — combining inference, tool use, and multi-turn conversation in a single endpoint. In this lesson you use the Responses API for agentic interactions with tool calling, and the **Agent helper class** for session-based workflows with automatic tool execution. By the end you will understand how to create agents, chain multi-turn conversations, define and invoke custom tools, and choose between OGX's Responses API and LangGraph agents.
 
 ## Prerequisites
 

@@ -1,4 +1,4 @@
-"""Production configuration text constants for L2-M1.3.
+"""Production configuration text constants for L2-M1.7.
 
 Keeps the large YAML/text blocks out of main.py so it stays readable.
 """

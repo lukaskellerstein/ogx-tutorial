@@ -1,11 +1,11 @@
-# L1-M3.1 — Vector IO API
+# L1-M3.1 — Vector Stores API
 
 **Level:** Essentials
 **Duration:** 45 min
 
 ## Overview
 
-OGX provides a **Vector IO API** that abstracts over vector databases, giving you a single interface for inserting document chunks and querying by similarity. In this lesson you will create a vector store backed by Qdrant, insert embedded documents, and retrieve them with natural language queries — all through OGX's unified API.
+OGX provides a **Vector Stores API** (`/v1/vector_stores`) that abstracts over vector databases, giving you a single interface for inserting document chunks and querying by similarity. In this lesson you will create a vector store backed by Qdrant, insert embedded documents, and retrieve them with natural language queries — all through OGX's unified API.
 
 ## Prerequisites
 

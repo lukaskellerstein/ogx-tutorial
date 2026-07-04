@@ -225,6 +225,4 @@ The lesson will print an informative message about how to configure shields, sho
 
 ## Next Steps
 
-You have completed Level 1 of the OGX tutorial! You now understand the full OGX API surface: inference, embeddings, RAG, tool calling, agents, and safety.
-
-Continue to **Level 2 (L2-M1.1 -- Multi-Provider Configuration)**, where you will configure multiple inference providers in a single OGX instance, set up routing for different tasks, and build fallback chains for production resilience.
+Continue to **L1-M7.1 — Files, Batches, Conversations, and Prompts**, where you will explore OGX's additional APIs for file management, batch processing, conversation state, and prompt templates.

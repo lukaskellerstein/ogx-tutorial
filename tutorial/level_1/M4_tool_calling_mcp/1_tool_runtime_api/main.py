@@ -249,7 +249,7 @@ def main() -> None:
     step5_mcp_note()
 
     print("=" * 60)
-    print("Lesson complete!")
+    print("Lesson complete! Next: L1-M5.1 — Creating Agents")
     print("=" * 60)
 
 

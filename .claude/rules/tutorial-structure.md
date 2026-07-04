@@ -26,10 +26,11 @@ Every lesson lives in `tutorial/<level>/<module>/<lesson>/` and contains exactly
 
 ```
 syllabus.md                         # Master syllabus — source of truth
-infra/
-  compose.yml                       # Podman Compose: OGX + vLLM + Qdrant + PostgreSQL
+ogx-local/
+  compose.yml                       # Podman Compose: OGX + Qdrant
+  .env                              # Environment config (Ollama URL, model, etc.)
 tutorial/
-  level_1/
+  level_1/                          # 11 lessons
     M1_fundamentals/
       1_architecture_overview/
       2_installing_running/
@@ -46,11 +47,21 @@ tutorial/
       2_agents_with_rag/
     M6_safety_api/
       1_content_moderation/
-  level_2/
+    M7_additional_apis/
+      1_files_batches_conversations_prompts/
+  level_2/                          # 10 lessons
     M1_advanced_patterns/
       1_multi_provider_config/
       2_custom_providers/
-      3_production_deployment/
+      3_telemetry_observability/
+      4_evaluation_rag_benchmarks/
+      5_reranking_advanced_retrieval/
+      6_file_processors/
+      7_production_deployment/
+    M2_ogx_openshift_ai/
+      1_operator_deployment/
+      2_vllm_integration/
+      3_safety_openshift/
 ```
 
 ## pyproject.toml Template
